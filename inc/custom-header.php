@@ -13,7 +13,7 @@
 	<?php } // if ( ! empty( $header_image ) ) ?>
 
  *
- * @package _s
+ * @package Sassy_s
  */
 
 /**
@@ -26,25 +26,25 @@
  *
  * @todo Rework this function to remove WordPress 3.4 support when WordPress 3.6 is released.
  *
- * @uses _s_header_style()
- * @uses _s_admin_header_style()
- * @uses _s_admin_header_image()
+ * @uses sassy_s_header_style()
+ * @uses sassy_s_admin_header_style()
+ * @uses sassy_s_admin_header_image()
  *
- * @package _s
+ * @package Sassy_s
  */
-function _s_custom_header_setup() {
+function sassy_s_custom_header_setup() {
 	$args = array(
 		'default-image'          => '',
 		'default-text-color'     => '000',
 		'width'                  => 1000,
 		'height'                 => 250,
 		'flex-height'            => true,
-		'wp-head-callback'       => '_s_header_style',
-		'admin-head-callback'    => '_s_admin_header_style',
-		'admin-preview-callback' => '_s_admin_header_image',
+		'wp-head-callback'       => 'sassy_s_header_style',
+		'admin-head-callback'    => 'sassy_s_admin_header_style',
+		'admin-preview-callback' => 'sassy_s_admin_header_image',
 	);
 
-	$args = apply_filters( '_s_custom_header_args', $args );
+	$args = apply_filters( 'sassy_s_custom_header_args', $args );
 
 	if ( function_exists( 'wp_get_theme' ) ) {
 		add_theme_support( 'custom-header', $args );
@@ -57,7 +57,7 @@ function _s_custom_header_setup() {
 		add_custom_image_header( $args['wp-head-callback'], $args['admin-head-callback'], $args['admin-preview-callback'] );
 	}
 }
-add_action( 'after_setup_theme', '_s_custom_header_setup' );
+add_action( 'after_setup_theme', 'sassy_s_custom_header_setup' );
 
 /**
  * Shiv for get_custom_header().
@@ -70,7 +70,7 @@ add_action( 'after_setup_theme', '_s_custom_header_setup' );
  * @todo Remove this function when WordPress 3.6 is released.
  * @return stdClass All properties represent attributes of the curent header image.
  *
- * @package _s
+ * @package Sassy_s
  */
 
 if ( ! function_exists( 'get_custom_header' ) ) {
@@ -84,13 +84,13 @@ if ( ! function_exists( 'get_custom_header' ) ) {
 	}
 }
 
-if ( ! function_exists( '_s_header_style' ) ) :
+if ( ! function_exists( 'sassy_s_header_style' ) ) :
 /**
  * Styles the header image and text displayed on the blog
  *
- * @see _s_custom_header_setup().
+ * @see sassy_s_custom_header_setup().
  */
-function _s_header_style() {
+function sassy_s_header_style() {
 	$header_text_color = get_header_textcolor();
 
 	// If no custom options for text are set, let's bail
@@ -107,7 +107,7 @@ function _s_header_style() {
 	?>
 		.site-title,
 		.site-description {
-			position: absolute !important;
+			position: absolute;
 			clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
 			clip: rect(1px, 1px, 1px, 1px);
 		}
@@ -123,15 +123,15 @@ function _s_header_style() {
 	</style>
 	<?php
 }
-endif; // _s_header_style
+endif; // sassy_s_header_style
 
-if ( ! function_exists( '_s_admin_header_style' ) ) :
+if ( ! function_exists( 'sassy_s_admin_header_style' ) ) :
 /**
  * Styles the header image displayed on the Appearance > Header admin panel.
  *
- * @see _s_custom_header_setup().
+ * @see sassy_s_custom_header_setup().
  */
-function _s_admin_header_style() {
+function sassy_s_admin_header_style() {
 ?>
 	<style type="text/css">
 	.appearance_page_custom-header #headimg {
@@ -151,31 +151,25 @@ function _s_admin_header_style() {
 	</style>
 <?php
 }
-endif; // _s_admin_header_style
+endif; // sassy_s_admin_header_style
 
-if ( ! function_exists( '_s_admin_header_image' ) ) :
+if ( ! function_exists( 'sassy_s_admin_header_image' ) ) :
 /**
  * Custom header image markup displayed on the Appearance > Header admin panel.
  *
- * @see _s_custom_header_setup().
+ * @see sassy_s_custom_header_setup().
  */
-function _s_admin_header_image() {
-	$header_text_color = get_header_textcolor();
+function sassy_s_admin_header_image() {
+	$style        = sprintf( ' style="color:#%s;"', get_header_textcolor() );
+	$header_image = get_header_image();
 ?>
 	<div id="headimg">
-		<?php
-		if ( 'blank' == $header_text_color || '' == $header_text_color )
-			$style = ' style="display:none;"';
-		else
-			$style = ' style="color:#' . $header_text_color . ';"';
-		?>
 		<h1 class="displaying-header-text"><a id="name"<?php echo $style; ?> onclick="return false;" href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php bloginfo( 'name' ); ?></a></h1>
 		<div class="displaying-header-text" id="desc"<?php echo $style; ?>><?php bloginfo( 'description' ); ?></div>
-		<?php $header_image = get_header_image();
-		if ( ! empty( $header_image ) ) : ?>
+		<?php if ( ! empty( $header_image ) ) : ?>
 			<img src="<?php echo esc_url( $header_image ); ?>" alt="" />
 		<?php endif; ?>
 	</div>
 <?php
 }
-endif; // _s_admin_header_image
+endif; // sassy_s_admin_header_image
